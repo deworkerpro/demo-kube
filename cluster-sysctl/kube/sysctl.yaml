@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: sysctl-tuner
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: sysctl-tuner
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sysctl-tuner
+    spec:
+      hostPID: true
+      priorityClassName: system-node-critical
+      hostNetwork: true
+      tolerations:
+        - operator: Exists
+      initContainers:
+        - image: busybox
+          name: sysctl-tuner
+          command:
+            - sh
+            - -c
+            - "sysctl -w fs.inotify.max_user_watches=131072 && sysctl -w fs.inotify.max_user_instances=512"
+          securityContext:
+            privileged: true
+            runAsUser: 0
+      containers:
+        - image: registry.k8s.io/pause:3.10
+          name: pause

@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    options {
+        timestamps()
+    }
+    stages {
+        stage ('Prod') {
+            when {
+                branch 'master'
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'REGISTRY', variable: 'REGISTRY'),
+                    usernamePassword(credentialsId: 'REGISTRY_AUTH', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD'),
+                    string(credentialsId: 'KUBERNETES_SERVER', variable: 'KUBERNETES_SERVER'),
+                ]) {
+                    withKubeConfig(credentialsId: 'KUBERNETES_TOKEN', serverUrl: env.KUBERNETES_SERVER) {
+                        sh 'make deploy'
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,34 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-staging
+  namespace: auction
+spec:
+  acme:
+    email: mail@deworker.pro
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+      - http01:
+          ingress:
+            serviceType: ClusterIP
+            ingressClassName: nginx
+
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+  namespace: auction
+spec:
+  acme:
+    email: mail@deworker.pro
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+      - http01:
+          ingress:
+            serviceType: ClusterIP
+            ingressClassName: nginx

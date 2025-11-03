@@ -1,0 +1,34 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.34.1'
+
+      - name: Kube Config
+        run: |
+          mkdir ~/.kube
+          envsubst < .github/kube-config.yaml > ~/.kube/config
+        env:
+          SERVER: ${{ secrets.KUBERNETES_SERVER }}
+          TOKEN: ${{ secrets.KUBERNETES_TOKEN }}
+
+      - name: Deploy
+        run: make deploy

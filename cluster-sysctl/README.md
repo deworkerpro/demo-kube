@@ -1,0 +1,1 @@
+https://help.ovhcloud.com/csm/en-public-cloud-kubernetes-adapt-inotify-parameters-deployments?id=kb_article_view&sysparm_article=KB0066221
